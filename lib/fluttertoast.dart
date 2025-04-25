@@ -243,6 +243,7 @@ class FToast {
     Duration fadeDuration = const Duration(milliseconds: 350),
     bool ignorePointer = false,
     bool isDismissible = false,
+    ToastPositionMapping? customPositionMapping,
   }) {
     if (context == null)
       throw ("Error: Context is null, Please call init(context) before showing toast.");
@@ -268,7 +269,12 @@ class FToast {
     OverlayEntry newEntry = OverlayEntry(builder: (context) {
       if (positionedToastBuilder != null)
         return positionedToastBuilder(context, newChild, gravity);
-
+      if (customPositionMapping != null) {
+        Widget? customPosition = customPositionMapping(newChild, gravity);
+        if (customPosition != null) {
+          return customPosition;
+        }
+      }
       return _getPositionWidgetBasedOnGravity(newChild, gravity);
     });
     _overlayQueue.add(_ToastEntry(
